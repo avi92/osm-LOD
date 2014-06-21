@@ -13,7 +13,6 @@ function getClosestStation(point) {
 			result = i;
 		}
 	}
-	// return stations[result].properties.id;
 	return result;
 }
 
@@ -25,8 +24,8 @@ function clickEvent(point) {
 	markers.removeMarker(markers.markers[0]);
 	var coordsTemp = stations[selected].geometry.coordinates + "";
 	var coords = coordsTemp.split(",");
-	markers.addMarker(new OpenLayers.Marker(new OpenLayers.LonLat(coords[0], coords[1]).transform(new OpenLayers.Projection("EPSG:4326"), // transform from WGS 1984
-	new OpenLayers.Projection("EPSG:900913")), icon.clone()));
-	// to Spherical Mercator Projection
-	console.log(getClosestStation(point));
+	markers.addMarker(new OpenLayers.Marker(new OpenLayers.LonLat(coords[0], coords[1])
+		.transform(new OpenLayers.Projection("EPSG:4326"), 	// transform from WGS 1984
+		new OpenLayers.Projection("EPSG:900913"))			// to Spherical Mercator Projection
+		, icon.clone()));
 }
