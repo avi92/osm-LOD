@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>OpenLayers Demo</title>
+		<style type="text/css">
+			html, body, #basicMap {
+				width: 100%;
+				height: 100%;
+				margin: 0;
+			}
+		</style>
+		<script src="http://www.openlayers.org/api/OpenLayers.js"></script>
+		<script src="geoFunctions.js" type="text/javascript"></script>
+		<script src="stations.js"></script>
+		<script>
+			// global variables
+			var map, strategy, clusters, markers, icon;
+			// array containing the vector features(stations)
+			var features = [];
+			// array containing only the coordinates of the vector features(as OpenLayers.Geometry.Point)
+			var stationPoints = [];
+			
+			// initiate the map and the station vector layer with all stations as vector features
+			function init(){
+				map = new OpenLayers.Map("basicMap");
+				var mapnik = new OpenLayers.Layer.OSM();
+				map.addLayer(mapnik);
+				map.setCenter(new OpenLayers.LonLat(13.41, 52.52)// Center of the map
+				.transform(new OpenLayers.Projection("EPSG:4326"), // transform from WGS 1984
+				new OpenLayers.Projection("EPSG:900913") // to Spherical Mercator Projection
+				), 7 // Zoom level
+				);
+				
+	            
+	           	// style of the vector features(stations)
+				var style = new OpenLayers.Style({
+                    pointRadius: "${radius}",
+                    fillColor: "#ffcc66",
+                    fillOpacity: 0.8,
+                    strokeColor: "#cc6633",
+                    strokeWidth: "${width}",
+                    strokeOpacity: 0.8
+                }, {
+                    context: {
+                        width: function(feature) {
+                            return (feature.cluster) ? 2 : 1;
+                        },
+                        radius: function(feature) {
+                            var pix = 2;
+                            if(feature.cluster) {
+                                pix = Math.min(feature.attributes.count, 7) + 2;
+                            }
+                            return pix;
+                        }
+                    }
+                });
+                
+                // Cluster Strategy
+                strategy = new OpenLayers.Strategy.Cluster();
+
+				// vector layer with the stations
+                clusters = new OpenLayers.Layer.Vector("Clusters", {
+                    strategies: [strategy],
+                    title: "Fortune's a bitch",
+                    eventListeners: {
+				        featureclick: function(e) {
+				            clickEvent(e.feature.geometry);
+				        }
+				    },
+                    styleMap: new OpenLayers.StyleMap({
+                        "default": style,
+                        "select": {
+                            fillColor: "#8aeeef",
+                            strokeColor: "#32a8a9"
+                        }
+                    })
+                });
+                
+                // properties of the marker inidicating the selected station
+                var size = new OpenLayers.Size(21, 25);
+				var offset = new OpenLayers.Pixel(-(size.w / 2), -size.h);
+				icon = new OpenLayers.Icon('http://www.openlayers.org/dev/img/marker.png', size, offset);
+				markers = new OpenLayers.Layer.Markers("Stations");
+				map.addLayer(markers);
+                
+                // selects the statoin closest the click event
+                map.events.register('click', map, function(evt) {
+					var lonlat = map.getLonLatFromViewPortPx(evt.xy);
+					var point = new OpenLayers.Geometry.Point(lonlat.lon, lonlat.lat);
+					clickEvent(point);
+				});
+				
+				
+                // defines hover event for the clusters
+                var select = new OpenLayers.Control.SelectFeature(
+                    clusters, {hover: true}
+                );
+                map.addControl(select);
+                select.activate();
+                
+                // 
+                clusters.events.on({"click": display});
+                
+                map.addLayer(clusters);
+                
+                
+                // adds all the stations from the station.js file as vector features to the clusters layer
+                for(var i = 0; i < stations.length; i++){
+	            	var temp = stations[i].geometry.coordinates + "";
+					var coords = temp.split(",");
+					stationPoints.push(new OpenLayers.Geometry.Point(coords[0], coords[1]).
+							transform(new OpenLayers.Projection("EPSG:4326"), // transform from WGS 1984
+							new OpenLayers.Projection("EPSG:900913")));
+					features.push(new OpenLayers.Feature.Vector(
+							stationPoints[i], 
+							{
+								x: coords[0], 
+								y: coords[1], 
+								id: stations[i].properties.id,
+								label: stations[i].properties.label
+							}
+					));
+	            }
+                
+                clusters.addFeatures(features);
+			}
+			
+			function display(){
+				console.log("On Hover?");
+			}
+
+		</script>
+	</head>
+	<body onload="init();">
+		<div id="basicMap"></div>
+	</body>
+</html>
