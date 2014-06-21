@@ -18,7 +18,7 @@
 			// array containing the vector features(stations)
 			var features = [];
 			// array containing only the coordinates of the vector features(as OpenLayers.Geometry.Point)
-			var stationPoints = [];
+			var stationsArr = [];
 			
 			// initiate the map and the station vector layer with all stations as vector features
 			function init(){
@@ -85,9 +85,13 @@
                 
                 // selects the station closest the click event
                 map.events.register('click', map, function(evt) {
-					var lonlat = map.getLonLatFromViewPortPx(evt.xy);
-					var point = new OpenLayers.Geometry.Point(lonlat.lon, lonlat.lat);
-					clickEvent(point);
+                	while( map.popups.length ) {
+				         map.removePopup(map.popups[0]);
+				    }
+					// var lonlat = map.getLonLatFromViewPortPx(evt.xy);
+					// console.log("LonLat: " + lonlat.lon + "|" + lonlat.lat);
+					// var point = new OpenLayers.Geometry.Point(lonlat.lon, lonlat.lat);
+					// clickEvent(point);
 				});
 				
 				
@@ -106,18 +110,8 @@
                 for(var i = 0; i < stations.length; i++){
 	            	var temp = stations[i].geometry.coordinates + "";
 					var coords = temp.split(",");
-					stationPoints.push(new OpenLayers.Geometry.Point(coords[0], coords[1]).
-							transform(new OpenLayers.Projection("EPSG:4326"), // transform from WGS 1984
-							new OpenLayers.Projection("EPSG:900913")));
-					features.push(new OpenLayers.Feature.Vector(
-							stationPoints[i], 
-							{
-								x: coords[0], 
-								y: coords[1], 
-								id: stations[i].properties.id,
-								label: stations[i].properties.label
-							}
-					));
+					stationsArr.push(new Station(stations[i].properties.id, stations[i].properties.label, coords[0], coords[1]));
+					features.push(stationsArr[i].getFeature());
 	            }
                 
                 clusters.addFeatures(features);
