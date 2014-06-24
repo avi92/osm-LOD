@@ -18,7 +18,7 @@ function getClosestStation(point) {
 
 
 // sets a marker on the station selected
-function clickEvent(point) {
+function clickEvent(point) {	
 	var selected = getClosestStation(point);
 
 	// markers.removeMarker(markers.markers[0]);
@@ -35,6 +35,7 @@ function Station(id, label, x, y){
 						new OpenLayers.Projection("EPSG:900913"));			// to Spherical Mercator Projection
 	this.feature 	= new OpenLayers.Feature.Vector(this.point, {id: this.id, label: this.label});
 	this.phenomena 	= null;
+	this.timeseries = null;
 }
 	
 // Getter
@@ -70,11 +71,10 @@ Station.prototype.loadPhenomena	= function(){
 		getPhenomenaJSON();
 	}
 	else{
-		showPopup();	
+		this.showPopup();	
 	}
 
 };
-
 
 // Constructor for Phenomenon Class
 function Phenomenon(id, label){

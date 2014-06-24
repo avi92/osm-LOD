@@ -5,6 +5,7 @@
 
 var temp = null;
 
+// requests the phenomena available for the station selected
 function getPhenomenaJSON(){
 	$.getJSON('http://sensorweb.demo.52north.org/sensorwebclient-webapp-stable/api/v1/phenomena/?station=' + temp.getId(), function(data) {
     	var phenArr = [];			
@@ -13,5 +14,8 @@ function getPhenomenaJSON(){
 		}
 		temp.setPhenomena(phenArr);
 		temp.showPopup();
+		temp = null;
 	});
 }
+
+
