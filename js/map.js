@@ -16,6 +16,23 @@ function getClosestStation(point) {
 	return stationsArr[result];
 }
 
+// adds stations from the stations array to the cluster layer
+function loadStations(){
+	// adds all the stations from the station.js file as vector features to the clusters layer
+    for(var i = 0; i < stations.length; i++){
+    	var temp = stations[i].geometry.coordinates + "";
+		var coords = temp.split(",");
+		stationsArr.push(new Station(stations[i].properties.id, stations[i].properties.label, coords[0], coords[1]));
+		features.push(stationsArr[i].getFeature());
+    }
+    
+    clusters.addFeatures(features);
+}
+
+// clears map from all stations
+function clearMap(){
+	clusters.removeAllFeatures();
+}
 
 // sets a marker on the station selected
 function clickEvent(point) {	
@@ -82,4 +99,25 @@ function Phenomenon(id, label){
 	this.label	= label;
 }
 
+
+
+// shows the animation div at the center of the screen
+function showLoadingAnimation(){
+	var w = $("#basicMap").width();
+	var h = $("#basicMap").height();
+	
+	$("#loadingAnimation").css('top', ( ( h / 2 ) - ( $('#loadingAnimation').height() / 2 ) ) );
+	$("#loadingAnimation").css('left', ( ( w / 2 ) - ( $('#loadingAnimation').width() / 2 ) ) );
+	$('#loadingAnimation').css('position', 'absolute');
+	$('#loadingAnimation').css('z-index', '999');
+	$('#basicMap').css('opacity', '0.5');
+	
+	$('#loadingAnimation').show();
+}
+
+// hides the animation div
+function hideLoadingAnimation(){
+	$('#loadingAnimation').hide();
+	$('#basicMap').css('opacity', '1');
+}
 
