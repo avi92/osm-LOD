@@ -40,10 +40,7 @@ function getStationsJSON(param) {
 	if (req) {
 		req.onreadystatechange = function() {
 			if(req.readyState == 4){
-				// console.log(req.responseText);
-				// var json = JSON.parse(req.responseText);
 				stations = JSON.parse(req.responseText);
-				console.log(stations);
 				loadStations();
 				hideLoadingAnimation();
 			}
