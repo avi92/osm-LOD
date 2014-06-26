@@ -8,6 +8,7 @@
 				width: 100%;
 				height: 100%;
 				margin: 0;
+				z-index: 0;
 			}
 		</style>
 		<script src="http://www.openlayers.org/api/OpenLayers.js"></script>
@@ -15,13 +16,16 @@
 		<script src="js/map.js" type="text/javascript"></script>
 		<script src="js/stations.js"></script>
 		<script src="js/requests.js" type="text/javascript"></script>
-		<script>
+		<script src="js/JarvisMarch.js" type="text/javascript"></script>
+		<script>		
 			// global variables
 			var map, strategy, clusters, markers, icon;
 			// array containing the vector features(stations)
 			var features = [];
 			// array containing only the coordinates of the vector features(as OpenLayers.Geometry.Point)
 			var stationsArr = [];
+			
+			var hull = new JarvisMarch();
 			
 			// initiate the map and the station vector layer with all stations as vector features
 			function init(){
@@ -54,6 +58,7 @@
                             if(feature.cluster) {
                                 pix = Math.min(feature.attributes.count, 7) + 4;
                             }
+                            else pix = 5;
                             return pix;
                         },
                         label: function(feature) {
@@ -61,26 +66,53 @@
                         		if(feature.attributes.count > 1)	return feature.attributes.count;
                         		else return "";
                         	}
+                        	else return "";
                         },
                         color: function(feature) {
                         	if(feature.cluster){
                         		if(feature.attributes.count > 1) return "#ffcc66";
                         		else return "#2E9AFE";
                         	}
+                        	else return "#2E9AFE";
                         }
                     }
                 });
                 
                 // Cluster Strategy
                 strategy = new OpenLayers.Strategy.Cluster();
+                strategy.distance = 50;
+                strategy.threshold = 4;
+                polyLayer = new OpenLayers.Layer.Vector("Polygons");
+                map.addLayer(polyLayer);
 
 				// vector layer with the stations
                 clusters = new OpenLayers.Layer.Vector("Clusters", {
                     strategies: [strategy],
                     title: "Station Layer",
                     eventListeners: {
+                    	featureout: function(e) {
+                    		if(e.feature.attributes.count > 1){
+                    			if(polyLayer.features.length > 0) polyLayer.removeAllFeatures();	
+                    		}
+                    	},
+                    	featureover: function(e) {
+                    		if(e.feature.attributes.count > 1){
+                    			var pointsP = [];
+                    			e.feature.cluster.forEach(function(feature){
+                    				pointsP.push(feature.geometry);
+                    			});
+                    			// console.log(hull.computeHull(pointsP));
+                    			//console.log("Result: " + hull.getHullPoints()[0]);
+                    			if(pointsP.length > 3)	var ring = new OpenLayers.Geometry.LinearRing(hull.computeHull(pointsP));
+                    			else 					var ring = new OpenLayers.Geometry.LinearRing(pointsP);
+                    			var polygon = new OpenLayers.Geometry.Polygon([ring]);
+                    			var polyFeature = new OpenLayers.Feature.Vector(ring);
+                    			polyLayer.addFeatures([polyFeature]);
+                    		}
+                    	},
 				        featureclick: function(e) {
 				        	if(e.feature.attributes.count > 1){
+				        		if(polyLayer.features.length > 0) polyLayer.removeAllFeatures();	
 				        		var cluster_bounds = new OpenLayers.Bounds();
 								e.feature.cluster.forEach(function(feature){
 								    cluster_bounds.extend(feature.geometry);
@@ -129,20 +161,26 @@
                 map.addLayer(clusters);
                 
                 
-                // adds all the stations from the station.js file as vector features to the clusters layer
-                for(var i = 0; i < stations.length; i++){
-	            	var temp = stations[i].geometry.coordinates + "";
-					var coords = temp.split(",");
-					stationsArr.push(new Station(stations[i].properties.id, stations[i].properties.label, coords[0], coords[1]));
-					features.push(stationsArr[i].getFeature());
-	            }
-                
-                clusters.addFeatures(features);
+                getStationsJSON();
 			}
 
 		</script>
 	</head>
 	<body onload="init();">
+		<div id="loadingAnimation" style="width: 400px; height: 200px; position: absolute; background-color: white; border: 1px solid black;">
+			<h1 style="text-align: center; margin: 5px;">Loading</h1>
+			<table>
+				<tr>
+					<td><img src="pics/globeSpinner.GIF" style="padding: 5px;"></td>
+					<td valign="center"><h3>Data is being requested. This may take up to 60 seconds. Please wait.</h3></td>
+				</tr>
+			</table>
+			
+		</div>
+		<script type="text/javascript">
+			$("#loadingAnimation").hide();
+		</script>
 		<div id="basicMap"></div>
 	</body>
+
 </html>
