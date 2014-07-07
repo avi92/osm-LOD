@@ -22,7 +22,7 @@ function loadStations(){
     for(var i = 0; i < stations.length; i++){
     	var temp = stations[i].geometry.coordinates + "";
 		var coords = temp.split(",");
-		stationsArr.push(new Station(stations[i].properties.id, stations[i].properties.label, coords[0], coords[1]));
+		stationsArr.push(new Station(stations[i].properties.id, stations[i].properties.label, coords[0], coords[1], i));
 		features.push(stationsArr[i].getFeature());
     }
     
@@ -44,7 +44,7 @@ function clickEvent(point) {
 }
 
 // 	Constructor for Station Object
-function Station(id, label, x, y){
+function Station(id, label, x, y, number){
 	this.id 		= id;
 	this.label 		= label;
 	this.point		= new OpenLayers.Geometry.Point(x,y)
@@ -53,6 +53,7 @@ function Station(id, label, x, y){
 	this.feature 	= new OpenLayers.Feature.Vector(this.point, {id: this.id, label: this.label});
 	this.phenomena 	= null;
 	this.timeseries = null;
+	this.number 	= number; 	// represents the number of the station in the station array
 }
 	
 // Getter
@@ -70,8 +71,8 @@ Station.prototype.setPhenomena	= function(data){	this.phenomena = data;};
 Station.prototype.buildPopup= function(){
 	var phens = '<tr><th>Phenomena:</th>';
 	for(var i = 0; i < this.phenomena.length; i++){
-		if(i == 0)	phens += '<td><a href="#' + this.phenomena[i].id + '">' + this.phenomena[i].label + '</a></td></tr>';	
-		else		phens += '<tr><td></td><td><a href="#' + this.phenomena[i].id + '">' + this.phenomena[i].label + '</a></td></tr>';	
+		if(i == 0)	phens += '<td><a href="#' + this.phenomena[i].id + '" onclick="frame.setDataViewer(\'' + this.id + '\',\'' + this.phenomena[i].id + '\')">' + this.phenomena[i].label + '</a></td></tr>';	
+		else		phens += '<tr><td></td><td><a href="#' + this.phenomena[i].id + '" onclick="frame.setDataViewer(\'' + this.id + '\',\'' + this.phenomena[i].id + '\')">' + this.phenomena[i].label + '</a></td></tr>';	
 	}
 	return '<table cellpadding="5"><tr><th colspan="2">Station Overview</th></tr><tr><td><b>Id:</b></td><td>' + this.id + '</td></tr><tr><td><b>Label:</b></td><td>' + this.label + '</td></tr>' + phens + '</table>';
 };
@@ -118,6 +119,29 @@ function showLoadingAnimation(){
 // hides the animation div
 function hideLoadingAnimation(){
 	$('#loadingAnimation').hide();
+	$('#basicMap').css('opacity', '1');
+}
+
+
+
+function showDataViewer(){
+	var w = $("#basicMap").width();
+	var h = $("#basicMap").height();
+	
+	$("#dataViewer").css('width', ( w * 0.8 ));
+	$("#dataViewer").css('height', 553 );
+	$("#dataViewer").css('top', ( ( h / 2 ) - ( $('#dataViewer').height() / 2 ) ) );
+	$("#dataViewer").css('left', ( ( w / 2 ) - ( $('#dataViewer').width() / 2 ) ) );
+	$('#dataViewer').css('position', 'absolute');
+	$('#dataViewer').css('z-index', '999');
+	$('#basicMap').css('opacity', '0.5');
+	
+	$('#dataViewer').show();
+}
+
+// hides the animation div
+function hideDataViewer(){
+	$('#dataViewer').hide();
 	$('#basicMap').css('opacity', '1');
 }
 
