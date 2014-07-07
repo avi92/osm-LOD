@@ -1,0 +1,96 @@
+body {
+	background-color: white;
+	opacity: 1.0;
+}
+
+#content{
+	overflow: auto;
+	background-color: white;
+}
+
+#topNav{
+	position: relative;
+	top: 0px;
+	left; 0px;
+	height: 25px;
+	border-bottom: 1px solid black;
+	background-color: #086A87;
+}
+
+#leftBox{
+	width: 20%;
+	border-right: 1px solid black;
+	height: 95%;
+	float: left;
+}
+
+#centerBox{
+	width: 60%;
+	height: 95%;
+	float: left;	
+}
+
+#rightBox{
+	width: 19%;
+	border-left: 1px solid black;
+	height: 95%;
+	float: right;
+}
+
+#topNav button{
+	margin: 0px;
+	float: right;
+	height: 99%;
+	width: 5%;
+	font-weight: bold;
+}
+
+#topNav #closeButton:hover{
+	background-color: #FE2E2E;
+}
+
+#topNav #shiftButton:hover{
+	background-color: #0080FF;
+}
+
+#leftBoxTop, #rightBoxTop{
+	border-bottom: 1px solid black;
+}
+
+#phenomenaList{
+	list-style-type: none;
+	padding: 0px;
+} 
+
+#timeseriesList{
+	list-style-type: none;
+	padding: 0px;
+	width: 120%;
+}
+
+#phenomenaList li, #timeseriesList li{
+	padding: 2px;
+}
+
+.infobox{
+	height: 50%;
+	width: 100%;
+	overflow: auto;
+}
+
+.tableData{
+	text-align: center;
+}
+
+.tableLabel{
+	text-align: left;
+	font-weight: bold;
+}
+
+.boxHeader{
+	font-size: x-large;
+	color: #086A87;
+	text-align: center;
+	text-decoration: underline;
+	margin: 3%;
+}
