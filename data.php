@@ -133,25 +133,25 @@
 							<td>ID</td>
 						</tr>
 						<tr>
-							<td class="tableData" id="leftBoxTopStationId">sta_aade671064600d2a8c951b5234a68924</td>
+							<td class="tableData" id="leftBoxTopStationId"></td>
 						</tr>
 						<tr class="tableLabel">
 							<td>Label</td>
 						</tr>
 						<tr>
-							<td class="tableData" id="leftBoxTopStationLabel">http://kli.uni-muenster.de/stations/hbs</td>
+							<td class="tableData" id="leftBoxTopStationLabel"></td>
 						</tr>
 						<tr class="tableLabel">
 							<td>X-Coordinate (EPSG: 900913)</td>
 						</tr>
 						<tr>
-							<td class="tableData" id="leftBoxTopStationX">845565.0408294755</td>
+							<td class="tableData" id="leftBoxTopStationX"></td>
 						</tr>
 						<tr class="tableLabel">
 							<td>Y-Coordinate (EPSG: 900913)</td>
 						</tr>
 						<tr>
-							<td class="tableData" id="leftBoxTopStationY">6794543.5167190675</td>
+							<td class="tableData" id="leftBoxTopStationY"></td>
 						</tr>
 					</table>
 				</div>
@@ -215,26 +215,7 @@
 					</p>
 					<ul id="phenomenaList">
 						<form name="phenomenaRadios">
-							<li>
-								<input type="radio" name="phenomena" value="bla">
-								AirTemperature
-							</li>
-							<li>
-								<input type="radio" name="phenomena" value="bla">
-								LongwaveRadiation
-							</li>
-							<li>
-								<input type="radio" name="phenomena" value="bla">
-								ShortwaveRadiation
-							</li>
-							<li>
-								<input type="radio" name="phenomena" value="bla">
-								WindDirection
-							</li>
-							<li>
-								<input type="radio" name="phenomena" value="bla">
-								WindSpeed
-							</li>
+						
 						</form>
 					</ul>
 				</div>
@@ -244,30 +225,6 @@
 						Timeseries
 					</p>
 					<ul id="timeseriesList">
-						<li>
-							<input type="checkbox" name="timeseries" value="ts_9aeb501771e3c068b33079157a0f7a61">
-							ts_9aeb501771e3c068b33079157a0f7a61
-						</li>
-						<li>
-							<input type="checkbox" name="timeseries" value="ts_9aeb501771e3c068b33079157a0f7a61">
-							ts_9aeb501771e3c068b33079157a0f7a61
-						</li>
-						<li>
-							<input type="checkbox" name="timeseries" value="ts_9aeb501771e3c068b33079157a0f7a61">
-							ts_9aeb501771e3c068b33079157a0f7a61
-						</li>
-						<li>
-							<input type="checkbox" name="timeseries" value="ts_9aeb501771e3c068b33079157a0f7a61">
-							ts_9aeb501771e3c068b33079157a0f7a61
-						</li>
-						<li>
-							<input type="checkbox" name="timeseries" value="ts_9aeb501771e3c068b33079157a0f7a61">
-							ts_9aeb501771e3c068b33079157a0f7a61
-						</li>
-						<li>
-							<input type="checkbox" name="timeseries" value="ts_9aeb501771e3c068b33079157a0f7a61">
-							ts_9aeb501771e3c068b33079157a0f7a61
-						</li>
 					</ul>
 				</div>
 			</div>
