@@ -93,11 +93,7 @@
 					<p class="boxHeader">Phenomena</p>	
 					<ul id="phenomenaList">
 						<form name="phenomenaRadios">
-						<li><input type="radio" name="phenomena" value="bla">AirTemperature</li>
-						<li><input type="radio" name="phenomena" value="bla">LongwaveRadiation</li>
-						<li><input type="radio" name="phenomena" value="bla">ShortwaveRadiation</li>
-						<li><input type="radio" name="phenomena" value="bla">WindDirection</li>
-						<li><input type="radio" name="phenomena" value="bla">WindSpeed</li>
+						
 						</form>
 					</ul>	
 				</div>
@@ -105,12 +101,7 @@
 				<div id="rightBoxBottom" class="infobox">
 					<p class="boxHeader">Timeseries</p>	
 					<ul id="timeseriesList">
-						<li><input type="checkbox" name="timeseries" value="ts_9aeb501771e3c068b33079157a0f7a61">ts_9aeb501771e3c068b33079157a0f7a61</li>
-						<li><input type="checkbox" name="timeseries" value="ts_9aeb501771e3c068b33079157a0f7a61">ts_9aeb501771e3c068b33079157a0f7a61</li>
-						<li><input type="checkbox" name="timeseries" value="ts_9aeb501771e3c068b33079157a0f7a61">ts_9aeb501771e3c068b33079157a0f7a61</li>
-						<li><input type="checkbox" name="timeseries" value="ts_9aeb501771e3c068b33079157a0f7a61">ts_9aeb501771e3c068b33079157a0f7a61</li>
-						<li><input type="checkbox" name="timeseries" value="ts_9aeb501771e3c068b33079157a0f7a61">ts_9aeb501771e3c068b33079157a0f7a61</li>
-						<li><input type="checkbox" name="timeseries" value="ts_9aeb501771e3c068b33079157a0f7a61">ts_9aeb501771e3c068b33079157a0f7a61</li>
+						
 					</ul>
 				</div>	
 			</div>
