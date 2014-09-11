@@ -7,14 +7,20 @@ function LineChart() {
 	// default line chart options for time related data
 	this.options = {
 		chart : {
-			renderTo : 'centerBox',
+			renderTo : 'centerBoxMainChart',
 			type : 'line',
 			zoomType : 'xy',
-			reflow: true
+			reflow: true,
+			style :{
+				fontFamily: 'serif'
+			}
 		},
-		// title : {
-			// x : -20
-		// },
+		title : {
+			style: {
+				fontFamily: 'serif',
+				fontSize: '22px'
+			}
+		},
 		// subtitle : {
 			// x : -20,
 			// y : 30
@@ -39,9 +45,11 @@ function LineChart() {
 			}
 		},
 		legend : {
-			layout : 'horizontal',
-			align : 'center',
-			verticalAlign : 'bottom',
+			enabled : false,	// legend is replaced by timeseries info containers (bottom right)
+			layout : 'vertical',
+			align : 'left',
+			floating: true,
+			verticalAlign : 'top',
 			borderWidth : 0
 		}
 	};

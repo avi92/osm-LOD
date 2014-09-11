@@ -1,96 +1,244 @@
+*{
+	font-family: "Times New Roman", Times, serif;
+}
+
 body {
 	background-color: white;
 	opacity: 1.0;
 }
 
-#content{
+#content {
 	overflow: auto;
 	background-color: white;
+	overflow: hidden;
 }
 
-#topNav{
+#topNav {
 	position: relative;
-	top: 0px;
-	left; 0px;
-	height: 25px;
-	border-bottom: 1px solid black;
-	background-color: #086A87;
+	top: 0px;left; 0px;
+	height: 40px;
 }
 
-#leftBox{
+#leftBox {
 	width: 20%;
 	border-right: 1px solid black;
 	height: 95%;
 	float: left;
 }
 
-#centerBox{
+#centerBox {
 	width: 60%;
 	height: 95%;
-	float: left;	
+	float: left;
+	background-color: white;
 }
 
-#rightBox{
+#rightBox {
 	width: 19%;
 	border-left: 1px solid black;
 	height: 95%;
 	float: right;
 }
 
-#topNav button{
+#topNav button {
 	margin: 0px;
 	float: right;
-	height: 99%;
+	vertical-align: middle;
+	height: 96%;
 	width: 5%;
 	font-weight: bold;
 }
 
-#topNav #closeButton:hover{
+#topNav #linkToOpenTab button{
+	margin: 0px;
+	float: right;
+	vertical-align: middle;
+	height: 96%;
+	width: 5%;
+	font-weight: bold;
+}
+
+
+#topNav #closeButton:hover {
 	background-color: #FE2E2E;
 }
 
-#topNav #shiftButton:hover{
+#topNav #linkToOpenTab button:hover {
 	background-color: #0080FF;
 }
 
-#leftBoxTop, #rightBoxTop{
+#leftBoxTop, #rightBoxTop {
 	border-bottom: 1px solid black;
 }
 
-#phenomenaList{
+#phenomenaList {
 	list-style-type: none;
 	padding: 0px;
-} 
-
-#timeseriesList{
-	list-style-type: none;
-	padding: 0px;
-	width: 120%;
 }
 
-#phenomenaList li, #timeseriesList li{
+#timeseriesList {
+	list-style-type: none;
+	padding: 0px;
+	max-width: 120%;
+}
+
+#timeseriesList div, #timeseriesList input, #timeseriesList table tr th, #timeseriesList table tr td{
+	font-size: 1em;
+}
+
+#phenomenaList li, #timeseriesList li {
 	padding: 2px;
 }
 
-.infobox{
+.infobox {
 	height: 50%;
 	width: 100%;
 	overflow: auto;
 }
 
-.tableData{
+.tableData {
 	text-align: center;
 }
 
-.tableLabel{
+.tableLabel {
 	text-align: left;
 	font-weight: bold;
 }
 
-.boxHeader{
+.timeseriesData {
+	border: 1px solid black;
+	margin: 3px;
+	padding: 2px;
+	background-color: #E6E6E6;
+	overflow: auto;
+}
+
+.timeseriesData img {
+	width: 1.1em;
+}
+
+.boxHeader {
 	font-size: x-large;
 	color: #086A87;
 	text-align: center;
 	text-decoration: underline;
 	margin: 3%;
 }
+
+/** Content Boxes Style **/
+#centerBoxMainChart, #centerBoxMainDatepick, #centerBoxMainRaw, #centerBoxMainTable {
+	width: 94%;
+	height: 92%;
+	margin: 2% auto;
+	text-align: center;
+	overflow: auto;
+}
+
+#centerBoxMainDatepick input {
+	font-size: larger;
+	width: 100%;
+}
+
+.rawJsonDownloadLink {
+	float: right;
+	margin: 10px;
+	padding: 5px;
+	font-size: large;
+	border: 1px outset black;
+	background-color: #D8D8D8;
+}
+
+.rawJson a:hover {
+	border: 1px inset black;
+}
+
+.rawJson a:visited, .rawJson a:focus, .rawJson a:link {
+	color: black;
+	text-decoration: none;
+}
+
+/**
+ * 	Dropdown Menu
+ **/
+
+
+nav {
+	/*width: 960px;*/
+}
+nav ul {
+	padding: 0px;
+	margin: 0px;
+	box-shadow: 2px 2px 2px #dfdfdf;
+	-moz-box-shadow: 2px 2px 2px #dfdfdf;
+	-webkit-box-shadow: 2px 2px 2px #dfdfdf;
+}
+
+nav ul:after {
+	clear: both;
+	content: " ";
+	display: block;
+	font-size: 0;
+	font-family: "Times New Roman", Times, serif;
+	height: 0;
+	visibility: hidden;
+}
+
+nav ul, nav ul li {
+	background-color: #086A87;
+	font-weight: bold;
+	font-family: "Times New Roman", Times, serif;
+}
+nav ul li {
+	list-style: none;
+	float: left;
+	border-right: 1px solid #dfdfdf;
+}
+nav ul li.cat1 a, nav ul li.cat2 a {
+	text-decoration: none;
+	display: block;
+	color: white;
+	padding: 10px 34px 10px 34px;
+	transition: background 0.3s ease-out; /* explorer 10 */
+	-webkit-transition: background 0.3s ease-out; /* chrome & safari */
+	-moz-transition: background 0.3 ease-out; /* firefox */
+	-o-transition: background 0.3 ease-out; /* opera */
+}
+
+nav ul li.cat3 a {
+	text-decoration: none;
+	display: block;
+	color: white;
+	padding: 8px 34px 0px 34px;
+}
+
+nav ul li.cat1:hover a, nav ul li.cat1:hover > ul li a {
+	background-color: #81BEF7;
+}
+nav ul li.cat2:hover a, nav ul li.cat2:hover > ul li a {
+	background-color: #81BEF7;
+}
+
+nav ul li:hover > a {
+	color: #FAFAFA;
+}
+nav ul li:hover > ul {
+	visibility: visible;
+}
+
+nav ul li ul {
+	display: inline;
+	visibility: hidden;
+	position: absolute;
+	padding: 0px;
+}
+nav ul li ul li {
+	float: none;
+}
+nav ul li ul li a {
+	color: #FAFAFA;
+}
+nav ul li ul li a:hover {
+	color: #333;
+	background-color: #FAFAFA !important;
+}
+

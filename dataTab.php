@@ -1,7 +1,18 @@
+<?php
+$stationjson = '';
+if (isset($_GET['stationId'])) {
+	$stationjson = getStationById($_GET['stationId']);
+}
+function getStationById($stationId) {
+	$json = file_get_contents('http://sensorweb.demo.52north.org/sensorwebclient-webapp-stable/api/v1/stations/' . $stationId);
+	return $json;
+}
+?>
+
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>OSM LOD INDEX</title>
+		<title>avi92 | ifgi Münster</title>
 		<meta http-equiv="content-type" content="text/html; charset=utf-8;" />
 		<style type="text/css">
 			html, body {
@@ -11,7 +22,7 @@
 			}
 			#content {
 				width: 99.9%;
-				height: 550px;
+				height: 700px;
 				border: 1px solid black;
 				margin: auto;
 			}
@@ -42,6 +53,7 @@
 		<script src="http://www.openlayers.org/api/OpenLayers.js"></script>
 		<script src="js/lib/jquery.js" type="text/javascript"></script>
 		<script src="js/lib/highcharts.js" type="text/javascript"></script>
+		<script src="js/map.js" type="text/javascript"></script>
 		<script src="js/dataViewer.js" type="text/javascript"></script>
 		<script src="js/chart.js" type="text/javascript"></script>
 		<script src="js/SeriesHandler.js" type="text/javascript"></script>
@@ -80,22 +92,55 @@
 					}
 				});
 			});
+
+<?php
+if (sizeof($stationjson) > 0) {
+	echo 'var json = \'' . $stationjson . '\';';
+	echo 'var stationSelected = true;';
+}
+?>
+	currentStation = null;
+	currentPhenomenon = null; 
+	if (stationSelected) {
+		var json = JSON.parse(json);
+		console.log("Station: " + json);
+		currentStation = new Station(json.properties.id, json.properties.label, json.geometry.coordinates[0], json.geometry.coordinates[1], 0);
+		getPhenomenaJSON(currentStation.getId());
+	}
+
+	var temp = null;
+	var req = null;
+	var table = null;
+
+	// requests the phenomena available for the station selected
+	function getPhenomenaJSON(stationId) {
+		$.getJSON('http://sensorweb.demo.52north.org/sensorwebclient-webapp-stable/api/v1/phenomena/?station=' + stationId, function(data) {
+			var phenArr = [];
+			for (var i = 0; i < data.length; i++) {
+				phenArr.push(new Phenomenon(data[i].id, data[i].label));
+			}
+			currentStation.setPhenomena(phenArr);
+			currentPhenomenon = currentStation.phenomena[0];
+			
+			setMetaData();
+			setMiniMap();
+			setPhenomena();
+			getTimeseriesJSON(currentPhenomenon.id, currentStation.getId());	
+			
+			chart = new LineChart();
+			table = new Table();
+			chart.initChart();
+			chart.setTitle('Timeseries');	
+			chart.clearSeries();
+			seriesHandler = [];	
+		});
+	}
 		</script>
 	</head>
 	<body>
 		<div id="content">
 			<!-- Top Navigation Bar -->
 			<div id="topNav" >
-				<button id="closeButton" title="Close" onclick="parent.hideDataViewer();">
-					X
-				</button>
-				<a id="linkToOpenTab" target="_blank" href="dataTab.php">
-					<button title="Open in New Tab	"><img width="20" src="pics/newTab.png" /></button>
-				</a>
-
-				<!-- <div id="centerBoxTopSpinner" style="vertical-align: baseline; float: right; margin-right: 50%;">
-					 <span style="vertical-align: top; font-size: large;">Loading...</span>
-				</div> -->
 				<nav>
 					<ul>
 						<li class = "cat2">
@@ -133,25 +178,25 @@
 							<td>ID</td>
 						</tr>
 						<tr>
-							<td class="tableData" id="leftBoxTopStationId">sta_aade671064600d2a8c951b5234a68924</td>
+							<td class="tableData" id="leftBoxTopStationId"></td>
 						</tr>
 						<tr class="tableLabel">
 							<td>Label</td>
 						</tr>
 						<tr>
-							<td class="tableData" id="leftBoxTopStationLabel">http://kli.uni-muenster.de/stations/hbs</td>
+							<td class="tableData" id="leftBoxTopStationLabel"></td>
 						</tr>
 						<tr class="tableLabel">
 							<td>X-Coordinate (EPSG: 900913)</td>
 						</tr>
 						<tr>
-							<td class="tableData" id="leftBoxTopStationX">845565.0408294755</td>
+							<td class="tableData" id="leftBoxTopStationX"></td>
 						</tr>
 						<tr class="tableLabel">
 							<td>Y-Coordinate (EPSG: 900913)</td>
 						</tr>
 						<tr>
-							<td class="tableData" id="leftBoxTopStationY">6794543.5167190675</td>
+							<td class="tableData" id="leftBoxTopStationY"></td>
 						</tr>
 					</table>
 				</div>
@@ -215,26 +260,7 @@
 					</p>
 					<ul id="phenomenaList">
 						<form name="phenomenaRadios">
-							<li>
-								<input type="radio" name="phenomena" value="bla">
-								AirTemperature
-							</li>
-							<li>
-								<input type="radio" name="phenomena" value="bla">
-								LongwaveRadiation
-							</li>
-							<li>
-								<input type="radio" name="phenomena" value="bla">
-								ShortwaveRadiation
-							</li>
-							<li>
-								<input type="radio" name="phenomena" value="bla">
-								WindDirection
-							</li>
-							<li>
-								<input type="radio" name="phenomena" value="bla">
-								WindSpeed
-							</li>
+
 						</form>
 					</ul>
 				</div>
@@ -244,30 +270,7 @@
 						Timeseries
 					</p>
 					<ul id="timeseriesList">
-						<li>
-							<input type="checkbox" name="timeseries" value="ts_9aeb501771e3c068b33079157a0f7a61">
-							ts_9aeb501771e3c068b33079157a0f7a61
-						</li>
-						<li>
-							<input type="checkbox" name="timeseries" value="ts_9aeb501771e3c068b33079157a0f7a61">
-							ts_9aeb501771e3c068b33079157a0f7a61
-						</li>
-						<li>
-							<input type="checkbox" name="timeseries" value="ts_9aeb501771e3c068b33079157a0f7a61">
-							ts_9aeb501771e3c068b33079157a0f7a61
-						</li>
-						<li>
-							<input type="checkbox" name="timeseries" value="ts_9aeb501771e3c068b33079157a0f7a61">
-							ts_9aeb501771e3c068b33079157a0f7a61
-						</li>
-						<li>
-							<input type="checkbox" name="timeseries" value="ts_9aeb501771e3c068b33079157a0f7a61">
-							ts_9aeb501771e3c068b33079157a0f7a61
-						</li>
-						<li>
-							<input type="checkbox" name="timeseries" value="ts_9aeb501771e3c068b33079157a0f7a61">
-							ts_9aeb501771e3c068b33079157a0f7a61
-						</li>
+
 					</ul>
 				</div>
 			</div>

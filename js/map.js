@@ -17,25 +17,25 @@ function getClosestStation(point) {
 }
 
 // adds stations from the stations array to the cluster layer
-function loadStations(){
+function loadStations() {
 	// adds all the stations from the station.js file as vector features to the clusters layer
-    for(var i = 0; i < stations.length; i++){
-    	var temp = stations[i].geometry.coordinates + "";
+	for (var i = 0; i < stations.length; i++) {
+		var temp = stations[i].geometry.coordinates + "";
 		var coords = temp.split(",");
 		stationsArr.push(new Station(stations[i].properties.id, stations[i].properties.label, coords[0], coords[1], i));
 		features.push(stationsArr[i].getFeature());
-    }
-    
-    clusters.addFeatures(features);
+	}
+
+	clusters.addFeatures(features);
 }
 
 // clears map from all stations
-function clearMap(){
+function clearMap() {
 	clusters.removeAllFeatures();
 }
 
 // sets a marker on the station selected
-function clickEvent(point) {	
+function clickEvent(point) {
 	var selected = getClosestStation(point);
 
 	// markers.removeMarker(markers.markers[0]);
@@ -44,104 +44,150 @@ function clickEvent(point) {
 }
 
 // 	Constructor for Station Object
-function Station(id, label, x, y, number){
-	this.id 		= id;
-	this.label 		= label;
-	this.point		= new OpenLayers.Geometry.Point(x,y)
-						.transform(new OpenLayers.Projection("EPSG:4326"),  // transform from WGS 1984
-						new OpenLayers.Projection("EPSG:900913"));			// to Spherical Mercator Projection
-	this.feature 	= new OpenLayers.Feature.Vector(this.point, {id: this.id, label: this.label});
-	this.phenomena 	= null;
+function Station(id, label, x, y, number) {
+	this.id = id;
+	this.label = label;
+	this.point = new OpenLayers.Geometry.Point(x, y).transform(new OpenLayers.Projection("EPSG:4326"), // transform from WGS 1984
+	new OpenLayers.Projection("EPSG:900913"));
+	// to Spherical Mercator Projection
+	this.feature = new OpenLayers.Feature.Vector(this.point, {
+		id : this.id,
+		label : this.label
+	});
+	this.phenomena = null;
 	this.timeseries = null;
-	this.number 	= number; 	// represents the number of the station in the station array
+	this.number = number;
+	// represents the number of the station in the station array
 }
-	
+
 // Getter
-Station.prototype.getId 	= function()	{	return this.id;	};
-Station.prototype.getLabel	= function()	{	return this.label;};
-Station.prototype.getPoint	= function()	{	return this.point;};
-Station.prototype.getFeature= function()	{	return this.feature;};
+Station.prototype.getId = function() {
+	return this.id;
+};
+Station.prototype.getLabel = function() {
+	return this.label;
+};
+Station.prototype.getPoint = function() {
+	return this.point;
+};
+Station.prototype.getFeature = function() {
+	return this.feature;
+};
 // Setter
-Station.prototype.setId		= function(id)		{	this.id = id;};
-Station.prototype.setLabel	= function(label)	{	this.label = label;};
-Station.prototype.setPoint	= function(point)	{	this.point = point;};	
-Station.prototype.setPhenomena	= function(data){	this.phenomena = data;};
+Station.prototype.setId = function(id) {
+	this.id = id;
+};
+Station.prototype.setLabel = function(label) {
+	this.label = label;
+};
+Station.prototype.setPoint = function(point) {
+	this.point = point;
+};
+Station.prototype.setPhenomena = function(data) {
+	this.phenomena = data;
+};
 
 // returns the html code for the popup content
-Station.prototype.buildPopup= function(){
+Station.prototype.buildPopup = function() {
 	var phens = '<tr><th>Phenomena:</th>';
-	for(var i = 0; i < this.phenomena.length; i++){
-		if(i == 0)	phens += '<td><a href="#' + this.phenomena[i].id + '" onclick="frame.setDataViewer(\'' + this.id + '\',\'' + this.phenomena[i].id + '\')">' + this.phenomena[i].label + '</a></td></tr>';	
-		else		phens += '<tr><td></td><td><a href="#' + this.phenomena[i].id + '" onclick="frame.setDataViewer(\'' + this.id + '\',\'' + this.phenomena[i].id + '\')">' + this.phenomena[i].label + '</a></td></tr>';	
+	for (var i = 0; i < this.phenomena.length; i++) {
+		if (i == 0)
+			phens += '<td><a href="#' + this.phenomena[i].id + '" onclick="frame.setDataViewer(\'' + this.id + '\',\'' + this.phenomena[i].id + '\')">' + this.phenomena[i].label + '</a></td></tr>';
+		else
+			phens += '<tr><td></td><td><a href="#' + this.phenomena[i].id + '" onclick="frame.setDataViewer(\'' + this.id + '\',\'' + this.phenomena[i].id + '\')">' + this.phenomena[i].label + '</a></td></tr>';
 	}
 	return '<table cellpadding="5"><tr><th colspan="2">Station Overview</th></tr><tr><td><b>Id:</b></td><td>' + this.id + '</td></tr><tr><td><b>Label:</b></td><td>' + this.label + '</td></tr>' + phens + '</table>';
 };
+Station.prototype.buildWaterLevelPopup = function(){
+	
+};
 // shows the popup
-Station.prototype.showPopup	= function(){
+Station.prototype.showPopup = function() {
 	this.feature.popup = new OpenLayers.Popup.FramedCloud("Popup", this.feature.geometry.getBounds().getCenterLonLat(), null, this.buildPopup(), null, true, null);
-	map.addPopup(this.feature.popup);	
+	map.addPopup(this.feature.popup);
 };
 
 // loads the phenomena of the station(if called up for the first time) by triggering a json requests
-Station.prototype.loadPhenomena	= function(){
-	if(this.phenomena == null){
+Station.prototype.loadPhenomena = function() {
+	if (this.phenomena == null) {
 		temp = this;
 		getPhenomenaJSON();
-	}
-	else{
-		this.showPopup();	
+	} else {
+		this.showPopup();
 	}
 
 };
 
 // Constructor for Phenomenon Class
-function Phenomenon(id, label){
-	this.id		= id;
-	this.label	= label;
+function Phenomenon(id, label) {
+	this.id = id;
+	this.label = label;
 }
 
-
-
 // shows the animation div at the center of the screen
-function showLoadingAnimation(){
+function showLoadingAnimation() {
 	var w = $("#basicMap").width();
 	var h = $("#basicMap").height();
-	
-	$("#loadingAnimation").css('top', ( ( h / 2 ) - ( $('#loadingAnimation').height() / 2 ) ) );
-	$("#loadingAnimation").css('left', ( ( w / 2 ) - ( $('#loadingAnimation').width() / 2 ) ) );
+
+	$("#loadingAnimation").css('top', ((h / 2 ) - ($('#loadingAnimation').height() / 2 ) ));
+	$("#loadingAnimation").css('left', ((w / 2 ) - ($('#loadingAnimation').width() / 2 ) ));
 	$('#loadingAnimation').css('position', 'absolute');
 	$('#loadingAnimation').css('z-index', '999');
 	$('#basicMap').css('opacity', '0.5');
-	
+
 	$('#loadingAnimation').show();
 }
 
 // hides the animation div
-function hideLoadingAnimation(){
+function hideLoadingAnimation() {
 	$('#loadingAnimation').hide();
 	$('#basicMap').css('opacity', '1');
 }
 
+// shows the data.php as an iframe in the center of the screen with the data of the station selected
+function showDataViewer() {
+	var w = $("body").width();
+	var h = $("body").height();
 
+	frame.document.getElementById('linkToOpenTab').href = 'dataTab.php?stationId=' + frame.currentStation.getId();
 
-function showDataViewer(){
-	var w = $("#basicMap").width();
-	var h = $("#basicMap").height();
-	
-	$("#dataViewer").css('width', ( w * 0.8 ));
-	$("#dataViewer").css('height', 553 );
-	$("#dataViewer").css('top', ( ( h / 2 ) - ( $('#dataViewer').height() / 2 ) ) );
-	$("#dataViewer").css('left', ( ( w / 2 ) - ( $('#dataViewer').width() / 2 ) ) );
+	$("#dataViewer").css('width', (w * 0.9 ));
+	$("#dataViewer").css('height', 553);
+	$("#dataViewer").css('top', ((h / 2 ) - ($('#dataViewer').height() / 2 ) ));
+	$("#dataViewer").css('left', ((w / 2 ) - ($('#dataViewer').width() / 2 ) ));
 	$('#dataViewer').css('position', 'absolute');
 	$('#dataViewer').css('z-index', '999');
 	$('#basicMap').css('opacity', '0.5');
-	
+
 	$('#dataViewer').show();
 }
 
 // hides the animation div
-function hideDataViewer(){
+function hideDataViewer() {
 	$('#dataViewer').hide();
 	$('#basicMap').css('opacity', '1');
 }
 
+// Water Level Layer Settings
+function initWaterLevelLayer() {
+	// vector layer with the stations
+	waterLevelLayer = new OpenLayers.Layer.Vector("Clusters", {
+		title : "Water Level Classification"
+	});
+	
+	getWaterLevelStationsJSON();
+	
+	
+	map.addLayer(waterLevelLayer);
+}
+
+function buildWaterLevelClassification(){
+	if(waterLevelAjaxCounter < waterLevelStations.length){
+		console.log(waterLevelAjaxCounter);
+		getWaterLevelMeasurementsJSON(waterLevelStations[waterLevelAjaxCounter].tsInfo);
+	}
+	else{
+		console.log(waterLevelAjaxCounter);
+		console.log("Finished");
+	}
+}
