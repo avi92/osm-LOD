@@ -4,7 +4,6 @@
 
 
 var temp = null;
-var waterLevelMem = null;
 var req = null;
 
 // requests the phenomena available for the station selected
@@ -21,7 +20,6 @@ function getPhenomenaJSON(){
 	});
 }
 
-
 // returns the XMLHTTPRequest, considering the browser used
 function getXMLHttpRequest() {
 	var httpReq = null;
@@ -33,7 +31,7 @@ function getXMLHttpRequest() {
 	return httpReq;
 }
 
-// requests all stations from the server and adds them to the server
+// requests all stations from the server and adds them to the stations array
 // triggers the loadStations function
 // during the loading process a loading animation is used
 function getStationsJSON() {
@@ -80,10 +78,7 @@ function getTimeseriesDataJSON(id){
 			if(req.readyState == 4){
 				try{
 					frame.ajaxMemory.timeseries = req.responseText;
-					frame.ajaxMemory.processData();
-					// add Series to the chart
-					// frame.chart.addSeries(frame.currentPhenomenon.timeSeries[tsNumber].data.name, true, frame.currentPhenomenon.timeSeries[tsNumber].data.name, frame.currentPhenomenon.timeSeries[tsNumber].data.data);
-					// frame.$("input[name='timeseries']").removeAttr("disabled");	
+					frame.ajaxMemory.processData();	
 				}
 				catch(e){
 					console.log(req.responseText);
@@ -102,60 +97,3 @@ function getTimeseriesDataJSON(id){
 		else	req.send('request=data&tsId=' + id);
 	}	
 }
-
-
-function getWaterLevelStationsJSON(){
-	req = getXMLHttpRequest();
-	if (req) {
-		req.onreadystatechange = function() {
-			if(req.readyState == 4){
-				try{
-					var json = JSON.parse(req.responseText);
-					for(var i = 0; i < json.length; i++){
-						waterLevelStations.push(new Station(json[i].station.properties.id, json[i].station.properties.label, json[i].station.geometry.coordinates[0], json[i].station.geometry.coordinates[1]));
-						waterLevelStations[i].unit = json[i].uom;
-						waterLevelStations[i].tsInfo = json[i].id;
-					}	
-					console.log(waterLevelStations);
-					buildWaterLevelClassification();
-				}
-				catch(e){
-					console.log(e);
-				}
-				
-			}
-		};
-		req.open("POST", "php/ajax.php", true);
-		req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-		req.send('request=level');
-	}	
-}
-
-function getWaterLevelMeasurementsJSON(tsId){
-	req = getXMLHttpRequest();
-	if (req) {
-		req.onreadystatechange = function() {
-			if(req.readyState == 4){
-				//try{
-					console.log(req.responseText);
-					var json = JSON.parse(req.responseText);	
-					console.log(json);	
-					waterLevelStations[waterLevelAjaxCounter].tsInfo = json;
-					console.log(waterLevelAjaxCounter);	
-				//}
-				//catch(e){
-					console.log(e);
-					console.log(waterLevelAjaxCounter);	
-				//}	
-				waterLevelAjaxCounter++;
-				buildWaterLevelClassification();			
-			}
-		};
-		console.log('request=levelReference&tsId=' + waterLevelStations[waterLevelAjaxCounter].tsInfo);
-		req.open("POST", "php/ajax.php", true);
-		req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-		req.send('request=levelReference&tsId=' + waterLevelStations[waterLevelAjaxCounter].tsInfo);
-	}	
-}
-
-

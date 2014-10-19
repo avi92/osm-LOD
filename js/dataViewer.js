@@ -2,27 +2,34 @@
  * @author Axel
  */
 
-var dvMap = null;
-var dvMarkerLayer = new OpenLayers.Layer.Markers("Stations");
+// global map variables
+var dvMap = null;	// mini map (bottom left container)
+var dvMarkerLayer = new OpenLayers.Layer.Markers("Stations"); // marker layer for the mini map (contains only one marker indicating the station's position)
+
+// variables used for the marker icon
 var size = new OpenLayers.Size(21, 25);
 var offset = new OpenLayers.Pixel(-(size.w / 2), -size.h);
 var dvIcon = new OpenLayers.Icon('pics/marker.GIF', size, offset);
-var currentStation, currentPhenomenon;
-// gloabl map variables
-var requestQueue = [];
-var seriesHandler = [];
-var chart = null;
+
+// global variables of the Data Frame
+var currentStation, currentPhenomenon;	// station and phenomenon selected 
+var requestQueue = [];					// used whenever the timespan is changed, requests are  queued up and executed one by one
+var seriesHandler = [];					// object that represents one timeseries
+var chart = null;						// global chart variable, is instantiated each time the chart is rebuilt
+// map settings used when the map is created
 var mapSettings = {
 	"map" : dvMap,
 	"markerLayer" : dvMarkerLayer,
 	"icon" : dvIcon
 };
+// time settings (only used if the timeseries is changed manually)
 var timeSettings = {
 	"timespan" : false,
 	"start" : null,
 	"end" : null
 };
 
+// initiate the mini map
 function initDvMap() {
 	mapSettings["map"] = new OpenLayers.Map("leftBoxBottom", {
 		controls : []
@@ -55,7 +62,7 @@ function setMiniMap() {
 	mapSettings["map"].setCenter(lonlat);
 }
 
-// display the phenomena available
+// display the phenomena available (currently limited to water level measurements)
 function setPhenomena() {
 	var content = '';
 	for (var i = 0; i < currentStation.phenomena.length; i++) {
@@ -99,7 +106,6 @@ function setTimeseries() {
 	document.getElementById('timeseriesList').innerHTML = content;
 
 	reloadTimeseriesData();
-	//if(seriesHandler.length == 1) seriesHandler[0].requestTimeseries();
 }
 
 // handler for the timeseries checkbox selection
@@ -117,6 +123,9 @@ function setChart(tsNumber) {
 
 }
 
+
+// executed whenever a new station is selected
+// blends in the Data Frame and resets GUI elements
 function setDataViewer(stationId, phenId) {
 	chart = new LineChart();
 	chart.initChart();
@@ -200,6 +209,8 @@ function applyTimespan() {
 	setView('chart');
 }
 
+
+// starts the requests for new timeseries data whenever the timespan is changed
 function reloadTimeseriesData() {
 	loadTimeseriesData();
 
@@ -215,7 +226,7 @@ function reloadTimeseriesData() {
 	getTimeseriesDataJsonFromQueue();
 }
 
-//	requests the timeseries data for the chart
+//	requests the timeseries data for the timeseries with the id given
 function getTimeseriesDataJSON(id) {
 	disableTimeseriesCheckboxes();
 	req = getXMLHttpRequest();
@@ -225,9 +236,6 @@ function getTimeseriesDataJSON(id) {
 				try {
 					ajaxMemory.timeseries = req.responseText;
 					ajaxMemory.processData();
-					// add Series to the chart
-					// frame.chart.addSeries(frame.currentPhenomenon.timeSeries[tsNumber].data.name, true, frame.currentPhenomenon.timeSeries[tsNumber].data.name, frame.currentPhenomenon.timeSeries[tsNumber].data.data);
-					// frame.$("input[name='timeseries']").removeAttr("disabled");
 				} catch(e) {
 					console.log(req.responseText);
 					ajaxMemory.processData();
@@ -248,8 +256,7 @@ function getTimeseriesDataJSON(id) {
 	}
 }
 
-//	requests the timeseries data for all the timeseries that are saved in the requestQueue
-//	this function is called up when the time is changed and loads all the active timeseries again with the time parameters given
+//	requests the timeseries data for all the timeseries that are saved in the requestQueue one by one
 function getTimeseriesDataJsonFromQueue() {
 	if (requestQueue.length == 0)
 		return;
@@ -283,7 +290,7 @@ function getTimeseriesDataJsonFromQueue() {
 	}
 }
 
-/* use a function for the exact format desired... */
+// converts a date into ISO format
 function ISODateString(d) {
 	function pad(n) {
 		return n < 10 ? '0' + n : n;
@@ -292,12 +299,14 @@ function ISODateString(d) {
 	return d.getUTCFullYear() + '-' + pad(d.getUTCMonth() + 1) + '-' + pad(d.getUTCDate());
 }
 
+// disable the timeseries' request buttons
 function disableTimeseriesCheckboxes() {
 	for (var i = 0; i < seriesHandler.length; i++) {
 		seriesHandler[i].disableCheckbox();
 	}
 }
 
+// enable the timeserie's request buttons
 function enableTimeseriesCheckboxes() {
 	for (var i = 0; i < seriesHandler.length; i++) {
 		seriesHandler[i].enableCheckbox();
@@ -309,10 +318,12 @@ function loadTimeseries() {
 	document.getElementById('timeseriesList').innerHTML = '<img style="margin: auto;" width="64" src="pics/globeSpinner.GIF">';
 }
 
+// show loading spinner
 function loadTimeseriesData() {
 	$("#centerBoxTopSpinner").show();
 }
 
+// hide loading spinner
 function noloadTimeseriesData() {
 	$("#centerBoxTopSpinner").hide();
 }
@@ -329,8 +340,6 @@ function setView(param) {
 		$("#centerBoxMainDatepick").hide();
 	if (param == 'chart') {
 		$("#centerBoxMainChart").show();
-		//chart.redraw();
-		//$("#centerBoxMainChart").css('width', "100%");
 	}
 	if (param == 'table')
 		$("#centerBoxMainTable").show();

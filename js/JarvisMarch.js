@@ -3,6 +3,7 @@ OpenLayers.Geometry.Point.prototype.mdist = function() {
 	return Math.abs(this.x) + Math.abs(this.y);
 };
 
+// checks if the point given as parameter is further away or not
 OpenLayers.Geometry.Point.prototype.isFurther = function(point) {
 	return this.mdist() > point.mdist();
 };
@@ -18,6 +19,7 @@ OpenLayers.Geometry.Point.prototype.isLess = function(point) {
 	return f > 0 || f == 0 && this.isFurther(point);
 };
 
+// returns a new OpenLayers.Geometry.Point object that is as far away from the origin point as the point that is handed over as a parameter
 OpenLayers.Geometry.Point.prototype.relTo = function(point) {
 	return new OpenLayers.Geometry.Point(this.x - point.x, this.y - point.y);
 };
@@ -29,7 +31,8 @@ function JarvisMarch() {
 	this.p = null;	// Input Points
 	this.n = null;	// Amount of Input Points
 	this.h = null;	// Amount of Result Points
-
+	
+	// returns an array with the points that are part of the hull
 	this.getHull = function() {
 		var result = [];
 		for (var i = 0; i < this.h - 1; i++) {
@@ -38,13 +41,13 @@ function JarvisMarch() {
 		return result;
 	};
 
+	// computes the hull returns it
 	this.computeHull = function(points) {
 		this.p = points;
 		this.n = points.length;
 		this.h = 0;
 		this.jarvisMarch();
 		return this.getHull();
-		// return h;
 	};
 
 	this.jarvisMarch = function() {

@@ -38,7 +38,6 @@
 		<script src="js/lib/jquery.js" type="text/javascript"></script>
 		<script src="js/requests.js" type="text/javascript"></script>
 		<script src="js/map.js" type="text/javascript"></script>
-		<script src="js/stations.js"></script>
 		<script src="js/JarvisMarch.js" type="text/javascript"></script>
 		<!-- <script src="js/dataViewer.js" type="text/javascript"></script> -->
 		<script>
@@ -52,7 +51,8 @@
 			var waterLevelAjaxCounter = 10;
 			// array containing only the coordinates of the vector features(as OpenLayers.Geometry.Point)
 			var stationsArr = [];
-
+			
+			// object that calculates the convex hull when clustering
 			var hull = new JarvisMarch();
 
 			// initiate the map and the station vector layer with all stations as vector features
@@ -90,10 +90,11 @@
 				strategy = new OpenLayers.Strategy.Cluster();
 				strategy.distance = 50;
 				strategy.threshold = 4;
+				// Layer for the polygons calculated when clustering
 				polyLayer = new OpenLayers.Layer.Vector("Polygons");
 				map.addLayer(polyLayer);
 
-				// vector layer with the stations
+				// vector layer with the stations and mouse listeners
 				clusters = new OpenLayers.Layer.Vector("Clusters", {
 					strategies : [strategy],
 					title : "Station Layer",
@@ -110,8 +111,6 @@
 								e.feature.cluster.forEach(function(feature) {
 									pointsP.push(feature.geometry);
 								});
-								// console.log(hull.computeHull(pointsP));
-								//console.log("Result: " + hull.getHullPoints()[0]);
 								if (pointsP.length > 3)
 									var ring = new OpenLayers.Geometry.LinearRing(hull.computeHull(pointsP));
 								else
@@ -143,36 +142,17 @@
 					})
 				});
 
-				// properties of the marker inidicating the selected station
-				var size = new OpenLayers.Size(21, 25);
-				var offset = new OpenLayers.Pixel(-(size.w / 2), -size.h);
-				icon = new OpenLayers.Icon('http://www.openlayers.org/dev/img/marker.png', size, offset);
-				markers = new OpenLayers.Layer.Markers("Stations");
-				map.addLayer(markers);
-
-				// selects the station closest the click event
-				map.events.register('click', map, function(evt) {
-					while (map.popups.length) {
-						map.removePopup(map.popups[0]);
-					}
-					// var lonlat = map.getLonLatFromViewPortPx(evt.xy);
-					// console.log("LonLat: " + lonlat.lon + "|" + lonlat.lat);
-					// var point = new OpenLayers.Geometry.Point(lonlat.lon, lonlat.lat);
-					// clickEvent(point);
-				});
-
 				// defines hover event for the clusters
 				var select = new OpenLayers.Control.SelectFeature(clusters, {
 					hover : true
 				});
 				map.addControl(select);
 				select.activate();
-
+				
+				// add station layer
 				map.addLayer(clusters);
 				map.controls[3].destroy();
-				// remove Attribution control
 
-				// loadStations();
 				getStationsJSON();
 			}
 

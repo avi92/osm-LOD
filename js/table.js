@@ -2,6 +2,11 @@
  * @author Axel
  */
 
+
+
+// constructor
+// represents the table in the Data Frame
+// the table values are stored in an d-dimensional matrix before the table is created
 function Table() {
 	this.id = 'dataTable';
 	// id of the table
@@ -46,7 +51,6 @@ function Table() {
 							var rowElementContent = document.createTextNode(this.dataArray[i][x]);	
 							rowElement.setAttribute("style", "color: " + chart.chart.get(this.titleArray[x]).color);	// gives the table values the same color value like the chart series
 				} 		
-				//var rowElementContent = document.createTextNode(this.dataArray[i][x]);
 				rowElement.appendChild(rowElementContent);
 				tablerow.appendChild(rowElement);
 			}
@@ -66,10 +70,10 @@ function Table() {
 			metadata.push({name: this.titleArray[i], datatype: "double(2)", editable: false});
 		}
 		
-		// we build and load the metadata in Javascript
+		// build and load the metadata in Javascript
 		editableGrid.load({ metadata: metadata});
 
-		// then we attach to the HTML table and render it
+		// attach to the HTML table and render it
 		editableGrid.attachToHTMLTable(this.id);
 		editableGrid.renderGrid();		
 	};

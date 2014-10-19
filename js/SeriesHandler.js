@@ -4,6 +4,8 @@
 
 var ajaxMemory = null;
 
+// constructor
+// a SeriesHandler represents one timeseries
 function SeriesHandler(id) {
 	this.timeseries = null;
 	this.id = id + '';
@@ -66,7 +68,6 @@ function SeriesHandler(id) {
 				chart.addSeries(this.id, true, this.id, this.timeseries.data);
 				if(requestQueue.length == 0) table.initTable();
 				addRaw(this.id, this.timeseries);
-				// document.getElementById("dataRaw").innerHTML = JSON.stringify(this.timeseries, null, "\t");
 				document.getElementById("sh" + this.id).getElementsByTagName('th')[0].style.color = chart.chart.get(this.id).color;
 			}
 			else{

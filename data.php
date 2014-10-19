@@ -49,6 +49,7 @@
 		<script src="js/lib/editablegrid-2.0.1.js" type="text/javascript"></script>
 		<script src="js/table.js" type="text/javascript"></script>
 		<script type="text/javascript">
+			// initiate table
 			var table = new Table();
 			$(document).ready(function() {
 				initDvMap();
@@ -57,7 +58,7 @@
 				$("#centerBoxMainRaw").hide();
 				$("#centerBoxMainDatepick").hide();
 			});
-
+			// initiate the timepicker
 			$(function() {
 				$(document).tooltip();
 				$("#datepickStart").datepicker({

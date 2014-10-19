@@ -2,6 +2,8 @@
 // - LineChart class -
 // -------------------
 
+
+
 // Constructor
 function LineChart() {
 	// default line chart options for time related data

@@ -2,7 +2,25 @@
  * @author Axel
  */
 
-// returns the Station that is closest to the point given
+// clears map from all stations
+function clearMap() {
+	clusters.removeAllFeatures();
+}
+
+//adds stations from the stations array to the cluster layer
+function loadStations(){
+    for(var i = 0; i < stations.length; i++){
+    	var temp = stations[i].geometry.coordinates + "";
+		var coords = temp.split(",");
+		stationsArr.push(new Station(stations[i].properties.id, stations[i].properties.label, coords[0], coords[1], i));
+		features.push(stationsArr[i].getFeature());
+    }
+    
+    clusters.addFeatures(features);
+}
+
+
+//	returns the Station that is closest to the point given
 function getClosestStation(point) {
 	var result = 0;
 	var nearest = point.distanceTo(stationsArr[0].getPoint());
@@ -16,30 +34,10 @@ function getClosestStation(point) {
 	return stationsArr[result];
 }
 
-// adds stations from the stations array to the cluster layer
-function loadStations() {
-	// adds all the stations from the station.js file as vector features to the clusters layer
-	for (var i = 0; i < stations.length; i++) {
-		var temp = stations[i].geometry.coordinates + "";
-		var coords = temp.split(",");
-		stationsArr.push(new Station(stations[i].properties.id, stations[i].properties.label, coords[0], coords[1], i));
-		features.push(stationsArr[i].getFeature());
-	}
-
-	clusters.addFeatures(features);
-}
-
-// clears map from all stations
-function clearMap() {
-	clusters.removeAllFeatures();
-}
-
-// sets a marker on the station selected
-function clickEvent(point) {
+// opens the popup of the station selected
+function clickEvent(point) {	
 	var selected = getClosestStation(point);
 
-	// markers.removeMarker(markers.markers[0]);
-	// markers.addMarker(new OpenLayers.Marker(new OpenLayers.LonLat(selected.getPoint().x, selected.getPoint().y), icon.clone()));
 	selected.loadPhenomena();
 }
 
@@ -56,8 +54,7 @@ function Station(id, label, x, y, number) {
 	});
 	this.phenomena = null;
 	this.timeseries = null;
-	this.number = number;
-	// represents the number of the station in the station array
+	this.number = number;	// represents the number of the station in the station array
 }
 
 // Getter
@@ -166,28 +163,4 @@ function showDataViewer() {
 function hideDataViewer() {
 	$('#dataViewer').hide();
 	$('#basicMap').css('opacity', '1');
-}
-
-// Water Level Layer Settings
-function initWaterLevelLayer() {
-	// vector layer with the stations
-	waterLevelLayer = new OpenLayers.Layer.Vector("Clusters", {
-		title : "Water Level Classification"
-	});
-	
-	getWaterLevelStationsJSON();
-	
-	
-	map.addLayer(waterLevelLayer);
-}
-
-function buildWaterLevelClassification(){
-	if(waterLevelAjaxCounter < waterLevelStations.length){
-		console.log(waterLevelAjaxCounter);
-		getWaterLevelMeasurementsJSON(waterLevelStations[waterLevelAjaxCounter].tsInfo);
-	}
-	else{
-		console.log(waterLevelAjaxCounter);
-		console.log("Finished");
-	}
 }

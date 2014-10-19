@@ -1,8 +1,10 @@
 <?php
+// determine the station from the url parameter
 $stationjson = '';
 if (isset($_GET['stationId'])) {
 	$stationjson = getStationById($_GET['stationId']);
 }
+// trigger request to get station metadata
 function getStationById($stationId) {
 	$json = file_get_contents('http://sensorweb.demo.52north.org/sensorwebclient-webapp-stable/api/v1/stations/' . $stationId);
 	return $json;
@@ -61,6 +63,7 @@ function getStationById($stationId) {
 		<script src="js/lib/editablegrid-2.0.1.js" type="text/javascript"></script>
 		<script src="js/table.js" type="text/javascript"></script>
 		<script type="text/javascript">
+			// initiate table
 			var table = new Table();
 			$(document).ready(function() {
 				initDvMap();
@@ -70,6 +73,7 @@ function getStationById($stationId) {
 				$("#centerBoxMainDatepick").hide();
 			});
 
+			// initiate timepicker
 			$(function() {
 				$(document).tooltip();
 				$("#datepickStart").datepicker({
@@ -94,11 +98,13 @@ function getStationById($stationId) {
 			});
 
 <?php
+// initiate the global JS variables
 if (sizeof($stationjson) > 0) {
 	echo 'var json = \'' . $stationjson . '\';';
 	echo 'var stationSelected = true;';
 }
 ?>
+	// get station and phenomena information and draw chart/table/raw view
 	currentStation = null;
 	currentPhenomenon = null; 
 	if (stationSelected) {
